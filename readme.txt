@@ -14,6 +14,8 @@ Quickly duplicate any WordPress menu with a very simple user interface.
 
 Quickly duplicate any WordPress menu with a very simple user interface.
 
+When duplicating menus it will keep all existing menu items and their settings.
+
 == Installation ==
 
 1. Download the latest version of the plugin files here.
