@@ -3,7 +3,7 @@
 Plugin Name: Menu Duplicator
 Plugin URI: http://jereross.com/menu-duplicator/
 Description: Quickly duplicate WordPress menus
-Version: 0.1
+Version: 0.2
 Author: Jeremy Ross
 Author URI: http://jereross.com/
 Requires at least: 3.5.0
@@ -27,12 +27,13 @@ along with Menu Duplicator. If not, see http://www.gnu.org/licenses/.
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 if ( ! is_admin() ) return; // Only execute inside the dashboard
 
-
-define( 'MD_VERSION',       '0.1');
+define( 'MD_VERSION',       '0.2');
 define( 'MD_TOOLS_PAGE',    esc_url(admin_url('tools.php')).'?page=menu-duplicator');
 
 
 add_action('admin_menu', function(){
+
+    if ( ! current_user_can('edit_theme_options') ) return; // Allow only users with edit_theme_options capabilities
 
     if($_SERVER['REQUEST_METHOD'] === 'POST' and $_POST['type'] === 'menu-duplicator')
         menu_duplicator_settings_update();
@@ -46,6 +47,8 @@ add_action('admin_menu', function(){
 // A bit "hacky" but it works, will need to be tested with each WordPress release
 add_action('current_screen', 'menu_duplicator_screen_check');
 function menu_duplicator_screen_check() {
+
+    if ( ! current_user_can('edit_theme_options') ) return; // Allow only users with edit_theme_options capabilities
 
     $current_screen = get_current_screen();
     $menu_count = count(wp_get_nav_menus());
@@ -110,6 +113,7 @@ $nav_menus = wp_get_nav_menus();
             </table>
             <input type="hidden" name="type" value="menu-duplicator">
             <?php submit_button( 'Duplicate', 'primary', 'submit', true); ?>
+            <?php wp_nonce_field('duplicate-menu'); ?>
         </form>
     </div>
 
@@ -119,6 +123,8 @@ $nav_menus = wp_get_nav_menus();
 
 // Function to duplicate menus
 function menu_duplicator_settings_update() {
+
+    check_admin_referer('duplicate-menu', '_wpnonce');
 
     $existing_menu_id = intval($_POST['menu-to-duplicate']);
     $new_menu_name = sanitize_text_field($_POST['new-menu-name']);
