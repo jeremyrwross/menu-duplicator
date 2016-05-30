@@ -37,18 +37,12 @@ add_action('admin_menu', function(){
     if($_SERVER['REQUEST_METHOD'] === 'POST' and $_POST['type'] === 'menu-duplicator')
         menu_duplicator_settings_update();
 
-});
-
-// create custom plugin tools menu & page
-add_action('admin_menu', 'menu_duplicator_plugin_create_menu_page');
-function menu_duplicator_plugin_create_menu_page() {
-
     add_management_page('Menu Duplicator', 'Menu Duplicator', 'activate_plugins', 'menu-duplicator', 'menu_duplicator_settings_page');
 
-}
+});
 
 
-// Add a tab to existing menu.php page
+// Add a tab to existing menu.php page for a better user experience
 // A bit "hacky" but it works, will need to be tested with each WordPress release
 add_action('current_screen', 'menu_duplicator_screen_check');
 function menu_duplicator_screen_check() {
@@ -132,7 +126,7 @@ function menu_duplicator_settings_update() {
     $existing_menu_items = wp_get_nav_menu_items($existing_menu_id);
 
     if(is_wp_error($new_menu_id)) {
-        menu_duplicator_admin_message('error', '<strong>'.$new_menu_name.'</strong> already exists, please select a different name.');
+        menu_duplicator_admin_message('error', 'Menu <strong>'.$new_menu_name.'</strong> already exists, please select a different name.');
         return;
     }
 
@@ -168,7 +162,6 @@ function menu_duplicator_settings_update() {
         wp_update_nav_menu_item( $new_menu_id, $new_menu_item_id, $args );
 
     }
-
 
     menu_duplicator_admin_message('success', '<strong>'.$new_menu_name.'</strong> menu has been created. <a href="'.esc_url(admin_url('nav-menus.php')).'?action=edit&menu='.$new_menu_id.'">Edit Menu</a>');
 
