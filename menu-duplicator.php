@@ -31,16 +31,31 @@ define( 'MD_VERSION',       '0.2');
 define( 'MD_TOOLS_PAGE',    esc_url(admin_url('tools.php')).'?page=menu-duplicator');
 
 
-add_action('admin_menu', function(){
+// Add a menu item and page for Menu Duplicator
+add_action('admin_menu', 'menu_duplicator_create_page');
+function menu_duplicator_create_page(){
 
-    if ( ! current_user_can('edit_theme_options') ) return; // Allow only users with edit_theme_options capabilities
+    add_management_page('Menu Duplicator', 'Menu Duplicator', 'edit_theme_options', 'menu-duplicator', 'menu_duplicator_settings_page');
 
-    if($_SERVER['REQUEST_METHOD'] === 'POST' and $_POST['type'] === 'menu-duplicator')
+}
+
+
+// Check capabilities and nonce then process the form
+add_action('init', 'menu_duplicator_process_form');
+function menu_duplicator_process_form(){
+    // Allow only users with edit_theme_options capabilities
+    if ( ! current_user_can('edit_theme_options') ) return;
+
+    // Check for POST and wpnonce
+    if($_SERVER['REQUEST_METHOD'] === 'POST' &&
+       $_POST['type'] === 'menu-duplicator' &&
+       check_admin_referer('menu-duplicator', 'menu_duplicator_nonce')) {
+
+        // Run menu duplication function
         menu_duplicator_settings_update();
 
-    add_management_page('Menu Duplicator', 'Menu Duplicator', 'activate_plugins', 'menu-duplicator', 'menu_duplicator_settings_page');
-
-});
+    }
+}
 
 
 // Add a tab to existing menu.php page for a better user experience
@@ -113,7 +128,7 @@ $nav_menus = wp_get_nav_menus();
             </table>
             <input type="hidden" name="type" value="menu-duplicator">
             <?php submit_button( 'Duplicate', 'primary', 'submit', true); ?>
-            <?php wp_nonce_field('duplicate-menu'); ?>
+            <?php wp_nonce_field('menu-duplicator','menu_duplicator_nonce'); ?>
         </form>
     </div>
 
@@ -123,8 +138,6 @@ $nav_menus = wp_get_nav_menus();
 
 // Function to duplicate menus
 function menu_duplicator_settings_update() {
-
-    check_admin_referer('duplicate-menu', '_wpnonce');
 
     $existing_menu_id = intval($_POST['menu-to-duplicate']);
     $new_menu_name = sanitize_text_field($_POST['new-menu-name']);
