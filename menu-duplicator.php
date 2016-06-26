@@ -104,7 +104,7 @@ function menu_duplicator_screen_check() {
 			$javascript = '
 			<script type="text/javascript">
 			jQuery(function(){
-			jQuery(".nav-tab-wrapper").append("<a href=\"'.MD_TOOLS_PAGE.'\" class=\"nav-tab\">Duplicate11</a>");
+			jQuery(".nav-tab-wrapper").append("<a href=\"' . MD_TOOLS_PAGE . '\" class=\"nav-tab\">Duplicate</a>");
 			});
 			</script>';
 			echo $javascript;
@@ -236,7 +236,7 @@ function menu_duplicator_settings_update() {
  * @param string $status Type of message to dipaly. Default error.
  * @param string $message Message to display.
  */
-function menu_duplicator_admin_message( string $status, string $message ) {
+function menu_duplicator_admin_message( $status, $message ) {
 
 	add_action( 'admin_notices', function() use ( $status, $message ) {
 
@@ -246,7 +246,7 @@ function menu_duplicator_admin_message( string $status, string $message ) {
 			$class = $status;
 		}
 
-		echo '<div class="notice notice-' . esc_attr( $class ) . ' is-dismissible"><p>' . esc_html( $message ) . '</p></div>';
+		echo '<div class="notice notice-' . esc_attr( $class ) . ' is-dismissible"><p>' . $message . '</p></div>';
 
 	});
 
