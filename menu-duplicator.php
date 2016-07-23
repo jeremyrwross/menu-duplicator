@@ -1,13 +1,12 @@
 <?php
 /**
- *
  * Plugin Name: Menu Duplicator
  * Plugin URI: http://jereross.com/menu-duplicator/
  * Description: Quickly duplicate WordPress menus
- * Version: 0.2
+ * Version: 0.3
  * Author: Jeremy Ross
  * Author URI: http://jereross.com
- * Requires at least: 3.5.0
+ * Requires at least: 4.0
  * Tested up to: 4.5.3
  *
  * Menu Duplicator is free software: you can redistribute it and/or modify
@@ -36,8 +35,9 @@ if ( ! is_admin() ) {
 	return;
 }
 
-define( 'MD_VERSION',		'0.2' );
+define( 'MD_VERSION',		'0.3' );
 define( 'MD_TOOLS_PAGE',	esc_url( admin_url( 'tools.php' ) ).'?page=menu-duplicator' );
+define( 'MD_PLUGIN_URL',	plugin_dir_url( __FILE__ ) );
 
 
 /**
@@ -70,9 +70,19 @@ function menu_duplicator_process_form() {
 	}
 
 	// Check for POST and wpnonce.
-	if ( 'POST' === $_SERVER['REQUEST_METHOD'] && 'menu-duplicator' === $_POST['type'] && check_admin_referer( 'menu-duplicator', 'menu_duplicator_nonce' ) ) {
+	if ( 'menu-duplicator' === $_POST['type'] && check_admin_referer( 'menu-duplicator', 'menu-duplicator-nonce' ) ) {
 
-		menu_duplicator_settings_update();
+		if ( ! isset( $_POST['menu-to-duplicate'] ) ) { // Input var okay.
+			menu_duplicator_admin_message( 'error', 'Menu to duplicate was not supplied. Please select a menu from the list below.' );
+			return;
+		}
+
+		if ( ! isset( $_POST['new-menu-name'] ) ) { // Input var okay.
+			menu_duplicator_admin_message( 'error', 'Name for the new menu was not supplied. Please input a name for the menu below.' );
+			return;
+		}
+
+		menu_duplicator_settings_update( $_POST['menu-to-duplicate'], $_POST['new-menu-name'] );
 
 	}
 }
@@ -98,22 +108,28 @@ function menu_duplicator_screen_check() {
 
 	if ( $current_screen->id === 'nav-menus' and $menu_count ) {
 
+		wp_enqueue_script( 'menu_duplicator_script', MD_PLUGIN_URL . '/assets/scripts/menu-duplicator.js', false, '1.0' );
 		// Output jQuery to create a new tab within the Menus dashboard page.
-		add_filter( 'admin_head', function() {
-			$tab = '';
-			$javascript = '
-			<script type="text/javascript">
-			jQuery(function(){
-			jQuery(".nav-tab-wrapper").append("<a href=\"' . MD_TOOLS_PAGE . '\" class=\"nav-tab\">Duplicate</a>");
-			});
-			</script>';
-			echo $javascript;
-		});
+		add_action( 'admin_head', 'menu_duplicator_admin_head_js' );
 
 	}
 
 }
 add_action( 'current_screen', 'menu_duplicator_screen_check' );
+
+
+/**
+ * Menu Page Tab
+ * Add a tab to existing menu.php page for a better user experience
+ * A bit "hacky" but it works, this will need to be tested with each WordPress release
+ *
+ * @since Menu Duplicator 0.2
+ */
+function menu_duplicator_admin_head_js() {
+	?>
+	<script type="text/javascript">var MD_TOOLS_PAGE = "<?php echo esc_url( MD_TOOLS_PAGE ); ?>";</script>
+	<?php
+}
 
 
 /**
@@ -145,7 +161,7 @@ function menu_duplicator_settings_page() {
                                 <option value="">&mdash; Select a Menu &mdash;</option>
                                 <?php foreach ( $nav_menus as $menu ) : ?>
                                     <option value="<?php echo esc_attr( $menu->term_id ); ?>">
-                                        <?php echo wp_html_excerpt( $menu->name, 40, '&hellip;' ); ?>
+                                        <?php echo esc_html( wp_html_excerpt( $menu->name, 40, '&hellip;' ) ); ?>
                                     </option>
                                 <?php endforeach; ?>
                             </select>
@@ -163,7 +179,7 @@ function menu_duplicator_settings_page() {
             </table>
             <input type="hidden" name="type" value="menu-duplicator">
             <?php submit_button( 'Duplicate', 'primary', 'submit', true ); ?>
-            <?php wp_nonce_field( 'menu-duplicator','menu_duplicator_nonce' ); ?>
+            <?php wp_nonce_field( 'menu-duplicator','menu-duplicator-nonce' ); ?>
         </form>
     </div>
 
@@ -174,14 +190,27 @@ function menu_duplicator_settings_page() {
 /**
  * Duplicate Menu
  *
- * FFunction to duplicate menus
+ * Function to duplicate menus
+ *
+ * @param string $menu_to_duplicate Type of message to dipaly. Default error.
+ * @param string $new_menu_name Message to display.
  *
  * @since Menu Duplicator 0.1
  */
-function menu_duplicator_settings_update() {
+function menu_duplicator_settings_update( $menu_to_duplicate, $new_menu_name ) {
 
-	$existing_menu_id = intval( $_POST['menu-to-duplicate'] );
-	$new_menu_name = sanitize_text_field( $_POST['new-menu-name'] );
+	if ( ! isset( $menu_to_duplicate ) ) { // Input var okay.
+		menu_duplicator_admin_message( 'error', 'Menu to duplicate was not supplied. Please select a menu from the list below.' );
+		return;
+	}
+
+	if ( ! isset( $new_menu_name ) ) { // Input var okay.
+		menu_duplicator_admin_message( 'error', 'Name for the new menu was not supplied. Please input a name for the menu below.' );
+		return;
+	}
+
+	$existing_menu_id = intval( $menu_to_duplicate ); // Input var okay.
+	$new_menu_name = sanitize_text_field( $new_menu_name ); // Input var okay.
 	$new_menu_id = wp_create_nav_menu( $new_menu_name );
 	$existing_menu_items = wp_get_nav_menu_items( $existing_menu_id );
 
@@ -240,13 +269,13 @@ function menu_duplicator_admin_message( $status, $message ) {
 
 	add_action( 'admin_notices', function() use ( $status, $message ) {
 
-		if ( ! in_array( $status, array( 'error', 'warning', 'success', 'info' ) ) ) {
+		if ( ! in_array( $status, array( 'error', 'warning', 'success', 'info' ), true ) ) {
 			$class = 'error';
 		} else {
 			$class = $status;
 		}
 
-		echo '<div class="notice notice-' . esc_attr( $class ) . ' is-dismissible"><p>' . $message . '</p></div>';
+		echo '<div class="notice notice-' . esc_attr( $class ) . ' is-dismissible"><p>' . $message . '</p></div>'; // WPCS: xss ok.
 
 	});
 
