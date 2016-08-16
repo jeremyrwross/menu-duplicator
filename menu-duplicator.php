@@ -108,7 +108,7 @@ function menu_duplicator_screen_check() {
 
 	if ( $current_screen->id === 'nav-menus' and $menu_count ) {
 
-		wp_enqueue_script( 'menu_duplicator_script', MD_PLUGIN_URL . '/assets/scripts/menu-duplicator.js', false, '1.0' );
+		wp_enqueue_script( 'menu_duplicator_script', MD_PLUGIN_URL . '/scripts/menu-duplicator.js', false, '1.0' );
 		// Output jQuery to create a new tab within the Menus dashboard page.
 		add_action( 'admin_head', 'menu_duplicator_admin_head_js' );
 
