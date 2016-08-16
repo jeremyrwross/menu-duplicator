@@ -3,11 +3,11 @@
  * Plugin Name: Menu Duplicator
  * Plugin URI: http://jereross.com/menu-duplicator/
  * Description: Quickly duplicate WordPress menus
- * Version: 0.3
+ * Version: 0.4
  * Author: Jeremy Ross
  * Author URI: http://jereross.com
  * Requires at least: 4.0
- * Tested up to: 4.5.3
+ * Tested up to: 4.6
  *
  * Menu Duplicator is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ if ( ! is_admin() ) {
 	return;
 }
 
-define( 'MD_VERSION',		'0.3' );
+define( 'MD_VERSION',		'0.4' );
 define( 'MD_TOOLS_PAGE',	esc_url( admin_url( 'tools.php' ) ).'?page=menu-duplicator' );
 define( 'MD_PLUGIN_URL',	plugin_dir_url( __FILE__ ) );
 
