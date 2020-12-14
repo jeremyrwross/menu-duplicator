@@ -3,11 +3,11 @@
  * Plugin Name: Menu Duplicator
  * Plugin URI: http://jereross.com/menu-duplicator/
  * Description: Quickly duplicate WordPress menus
- * Version: 0.4
+ * Version: 0.5
  * Author: Jeremy Ross
  * Author URI: http://jereross.com
  * Requires at least: 4.0
- * Tested up to: 4.6
+ * Tested up to: 5.5
  *
  * Menu Duplicator is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ if ( ! is_admin() ) {
 	return;
 }
 
-define( 'MD_VERSION',		'0.4' );
+define( 'MD_VERSION',		'0.5' );
 define( 'MD_TOOLS_PAGE',	esc_url( admin_url( 'tools.php' ) ).'?page=menu-duplicator' );
 define( 'MD_PLUGIN_URL',	plugin_dir_url( __FILE__ ) );
 
@@ -70,7 +70,7 @@ function menu_duplicator_process_form() {
 	}
 
 	// Check for POST and wpnonce.
-	if ( 'menu-duplicator' === $_POST['type'] && check_admin_referer( 'menu-duplicator', 'menu-duplicator-nonce' ) ) {
+	if ( isset( $_POST['type'] ) && 'menu-duplicator' === $_POST['type'] && check_admin_referer( 'menu-duplicator', 'menu-duplicator-nonce' ) ) {
 
 		if ( ! isset( $_POST['menu-to-duplicate'] ) ) { // Input var okay.
 			menu_duplicator_admin_message( 'error', 'Menu to duplicate was not supplied. Please select a menu from the list below.' );
@@ -228,11 +228,17 @@ function menu_duplicator_settings_update( $menu_to_duplicate, $new_menu_name ) {
 		// Store all parent child relationships in an array.
 		$parent_child[ $value->db_id ] = $new_menu_item_id;
 
+		if ( isset( $parent_child[ $value->menu_item_parent ] ) ) {
+			$menu_item_parent_id = $parent_child[ $value->menu_item_parent ];
+		} else {
+			$menu_item_parent_id = 0;
+		}
+
 		$args = array(
 			'menu-item-db-id'       => $value->db_id,
 			'menu-item-object-id'   => $value->object_id,
 			'menu-item-object'      => $value->object,
-			'menu-item-parent-id'   => intval( $parent_child[ $value->menu_item_parent ] ),
+			'menu-item-parent-id'   => intval( $menu_item_parent_id ),
 			'menu-item-position'    => $value->menu_order,
 			'menu-item-type'        => $value->type,
 			'menu-item-title'       => $value->title,

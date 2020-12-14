@@ -3,8 +3,8 @@ Contributors: jeremyrwross
 Donate link: http://jereross.com/wordpress-menu-duplicator/
 Tags: menu, navigation, nav
 Requires at least: 4.0
-Tested up to: 4.6
-Stable tag: 0.4
+Tested up to: 5.5
+Stable tag: 0.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -37,6 +37,10 @@ Within the WordPress dashboard go to Tools -> Menu Duplicator to access the Dupl
 
 
 == Changelog ==
+
+= 0.5 =
+* Tested with WordPress 5.1
+* Fixed: PHP Notice when Duplicating Menus
 
 = 0.4 =
 * Tested with WordPress 4.6
