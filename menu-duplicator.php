@@ -154,7 +154,7 @@ function menu_duplicator_settings_page() {
                 <tbody>
                     <tr>
                         <th>
-                            <label for="menu-to-duplicate">Eixting Menu <span class="description">(required)</span></label>
+                            <label for="menu-to-duplicate">Existing Menu <span class="description">(required)</span></label>
                         </th>
                         <td>
                             <select id="menu-to-duplicate" name="menu-to-duplicate" required>
