@@ -7,7 +7,7 @@
  * Author: Jeremy Ross
  * Author URI: http://jereross.com
  * Requires at least: 4.0
- * Tested up to: 5.7
+ * Tested up to: 6.3
  *
  * Menu Duplicator is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -124,8 +124,8 @@ add_action('current_screen', 'menu_duplicator_screen_check');
 function menu_duplicator_admin_head_js()
 {
     ?>
-	<script type="text/javascript">var MD_TOOLS_PAGE = "<?php echo esc_url(MD_TOOLS_PAGE); ?>";</script>
-	<?php
+    <script type="text/javascript">var MD_TOOLS_PAGE = "<?php echo esc_url(MD_TOOLS_PAGE); ?>";</script>
+    <?php
 }
 
 
@@ -179,7 +179,7 @@ function menu_duplicator_settings_page()
     </div>
 
 </div>
-<?php
+    <?php
 }
 
 
@@ -189,7 +189,7 @@ function menu_duplicator_settings_page()
  * Function to duplicate menus
  *
  * @param string $menu_to_duplicate Type of message to dipaly. Default error.
- * @param string $new_menu_name Message to display.
+ * @param string $new_menu_name     Message to display.
  *
  * @since Menu Duplicator 0.1
  */
@@ -262,18 +262,20 @@ function menu_duplicator_settings_update($menu_to_duplicate, $new_menu_name)
  *
  * @since Menu Duplicator 0.1
  *
- * @param string $status Type of message to dipaly. Default error.
+ * @param string $status  Type of message to dipaly. Default error.
  * @param string $message Message to display.
  */
 function menu_duplicator_admin_message($status, $message)
 {
-    add_action('admin_notices', function () use ($status, $message) {
-        if (! in_array($status, array( 'error', 'warning', 'success', 'info' ), true)) {
-            $class = 'error';
-        } else {
-            $class = $status;
-        }
+    add_action(
+        'admin_notices', function () use ($status, $message) {
+            if (! in_array($status, array( 'error', 'warning', 'success', 'info' ), true)) {
+                $class = 'error';
+            } else {
+                $class = $status;
+            }
 
-        echo '<div class="notice notice-' . esc_attr($class) . ' is-dismissible"><p>' . $message . '</p></div>'; // WPCS: xss ok.
-    });
+            echo '<div class="notice notice-' . esc_attr($class) . ' is-dismissible"><p>' . $message . '</p></div>'; // WPCS: xss ok.
+        }
+    );
 }
