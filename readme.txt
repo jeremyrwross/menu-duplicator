@@ -4,7 +4,7 @@ Donate link: http://jereross.com/wordpress-menu-duplicator/
 Tags: menu, navigation, nav
 Requires at least: 4.0
 Tested up to: 6.3
-Stable tag: 0.6
+Stable tag: 0.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -37,6 +37,10 @@ Within the WordPress dashboard go to Tools -> Menu Duplicator to access the Dupl
 
 
 == Changelog ==
+
+= 0.7 =
+* Tested with WordPress 6.3
+* Add Github Action Deploy
 
 = 0.6 =
 * Fixed typo, thanks michael-sumner!
