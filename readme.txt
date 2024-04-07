@@ -8,11 +8,11 @@ Stable tag: 0.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Quickly duplicate any WordPress menu with a very simple user interface.
+Effortlessly clone your WordPress menus with Menu Duplicator, the user-friendly plugin designed to streamline your website management process in just a few clicks.
 
 == Description ==
 
-Quickly duplicate any WordPress menu with a very simple user interface.
+Effortlessly clone your WordPress menus with Menu Duplicator, the user-friendly plugin designed to streamline your website management process in just a few clicks.
 
 When duplicating menus it will keep all existing menu items and their settings.
 
