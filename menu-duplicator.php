@@ -7,7 +7,6 @@
  * Author: Jeremy Ross
  * Author URI: http://jereross.com
  * Requires at least: 4.0
- * Tested up to: 6.5
  *
  * Menu Duplicator is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
